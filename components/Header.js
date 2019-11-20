@@ -1,27 +1,40 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text } from "galio-framework";
+import { View, StyleSheet, Text, Platform } from "react-native";
+import {} from "galio-framework";
 
 const Header = props => {
   return (
-    <View style={styles.header}>
-      <Text p color="white">
-        {props.title}
-      </Text>
+    <View
+      style={{
+        ...styles.headerBase,
+        ...Platform.select({
+          ios: styles.headerIos,
+          android: styles.headerAndroid
+        })
+      }}
+    >
+      <Text style={styles.headerTitle}>{props.title}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
+  headerBase: {
     width: "100%",
-    height: "10%",
-    paddingTop: "12%",
+    height: "15%",
+    paddingTop: 20,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
+    // backgroundColor: Platform.OS === "android" ? "#ff126e" : "white"
+  },
+  headerAndroid: {
     backgroundColor: "#ff126e"
   },
-  headerTitle: {}
+  headerIos: {},
+  headerTitle: {
+    color: Platform.OS === "ios" ? "#ff126e" : "white",
+    fontSize: 20
+  }
 });
 
 export default Header;

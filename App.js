@@ -57,6 +57,8 @@ export default function App() {
     <View style={styles.screen}>
       <Header title="Guess a Number" />
       {currentScreen}
+      {/* <GameOver rounds={1} resetGame={reset} /> */}
+      {/* <GameScreen selectedNumber={10} onGameOver={gameOverHandler} /> */}
     </View>
   );
 }

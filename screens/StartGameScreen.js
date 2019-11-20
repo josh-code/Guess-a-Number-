@@ -1,18 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
-  Text
+  Text,
+  Dimensions,
+  ScrollView
 } from "react-native";
 import { Input, Button, Block } from "galio-framework";
+import TitleText from "./../components/TitleText";
+import MainButton from "./../components/MainButton";
 
 const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmedValue, setConfirmedValue] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState();
+  const [buttonWidth, setButtonwidth] = useState(
+    Dimensions.get("window").width / 4
+  );
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonwidth(Dimensions.get("window").width / 4);
+    };
+    Dimensions.addEventListener("change", updateLayout);
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout);
+    };
+  });
 
   const numberInputHandler = inputText => {
     setEnteredValue(inputText.replace(/[^0-9]/g, ""));
@@ -57,53 +74,49 @@ const StartGameScreen = props => {
         >
           {selectedNumber}
         </Text>
-        <Button
-          style={styles.button}
-          color="transparent"
-          onPress={() => props.setSelection(selectedNumber)}
-        >
+        <MainButton onPress={() => props.setSelection(selectedNumber)}>
           Continue
-        </Button>
+        </MainButton>
       </View>
     );
   }
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.screen}>
-        <Text h4 style={{ fontFamily: "gotham" }}>
-          Start a New Game!{" "}
-        </Text>
-        <View style={styles.input}>
-          <Input
-            placeholder="Enter a Number"
-            type="number-pad"
-            blurOnSubmit={true}
-            maxLength={2}
-            style={styles.input}
-            onChangeText={numberInputHandler}
-            value={enteredValue}
-          ></Input>
+    <ScrollView>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View style={styles.screen}>
+          <TitleText text="Start a new Game!" />
+          <View style={styles.input}>
+            <Input
+              placeholder="Enter a Number"
+              type="number-pad"
+              blurOnSubmit={true}
+              maxLength={2}
+              style={styles.input}
+              onChangeText={numberInputHandler}
+              value={enteredValue}
+            ></Input>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button style={{ width: buttonWidth }} onPress={resetInputHandler}>
+              Reset
+            </Button>
+            <Button
+              style={{ width: buttonWidth }}
+              onPress={confirmValueHandler}
+              color="primary"
+            >
+              Confirm
+            </Button>
+          </View>
+          {confirmedOutput}
         </View>
-        <View style={styles.buttonContainer}>
-          <Button style={styles.button} onPress={resetInputHandler}>
-            Reset
-          </Button>
-          <Button
-            style={styles.button}
-            onPress={confirmValueHandler}
-            color="primary"
-          >
-            Confirm
-          </Button>
-        </View>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
@@ -111,7 +124,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 10,
-    paddingVertical: "20%",
+    justifyContent: "center",
     alignItems: "center"
   },
   input: {
@@ -122,9 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     width: "90%"
-  },
-  button: {
-    width: "47%"
   },
   confirmedBox: {
     width: "80%",
